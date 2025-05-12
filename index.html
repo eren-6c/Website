@@ -14,6 +14,30 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
+<style>
+    #cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 12px;
+        height: 12px;
+        background-color: red;
+        border: 2px solid rgba(255, 0, 0, 0.7);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: transform 0.05s ease;
+    }
+</style>
+<div id="cursor"></div>
+<script>
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.top = e.clientY + 'px';
+        cursor.style.left = e.clientX + 'px';
+    });
+</script>
 
 <body class="min-h-screen text-white">
     <div id="particles-js"></div>
