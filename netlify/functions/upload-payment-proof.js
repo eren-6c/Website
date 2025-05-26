@@ -8,7 +8,7 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    const { filename, fileBase64, plan, price, email, whatsapp } = body;
+    const { filename, fileBase64, plan, price, email, whatsapp, transactionId } = body;
 
     if (!filename || !fileBase64 || !email) {
       return { statusCode: 400, body: 'Missing required fields (filename, fileBase64, or email)' };
@@ -47,7 +47,8 @@ exports.handler = async (event) => {
             { name: "💼 Plan", value: plan || "N/A", inline: true },
             { name: "💰 Price", value: `$${price || "N/A"}`, inline: true },
             { name: "📧 Email", value: email, inline: false },
-            { name: "📱 WhatsApp", value: whatsapp ? whatsapp : "Not provided", inline: false },
+            { name: "📱 WhatsApp", value: whatsapp || "Not provided", inline: false },
+            { name: "🆔 Transaction ID", value: transactionId || "Not provided", inline: false },
           ],
           image: { url: imageUrl },
           timestamp: new Date().toISOString(),
