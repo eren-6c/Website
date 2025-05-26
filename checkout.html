@@ -21,9 +21,37 @@
     ::-webkit-scrollbar-track {
       background-color: #222;
     }
+
+    /* Loading overlay styles */
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(18, 18, 18, 0.85);
+      z-index: 9999;
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Simple spinner */
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #facc15; /* Tailwind yellow-400 */
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center px-4 py-12">
+<body class="min-h-screen flex items-center justify-center px-4 py-12 relative">
   <div class="max-w-md w-full bg-gray-900 rounded-3xl shadow-xl p-10">
     <h2 class="text-4xl font-extrabold mb-8 text-yellow-400 text-center">Choose Your Payment Method</h2>
 
@@ -88,6 +116,11 @@
     </form>
   </div>
 
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" aria-live="assertive" role="alert" aria-label="Loading">
+    <div class="spinner" aria-hidden="true"></div>
+  </div>
+
   <script>
     const planPrices = {
       '1week': 5,
@@ -115,6 +148,9 @@
     });
 
     const form = document.getElementById('paymentForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB max file size
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -122,6 +158,12 @@
       const file = fileInput.files[0];
       if (!file) {
         alert('Please upload your payment proof file.');
+        return;
+      }
+
+      // Check file size before submitting
+      if (file.size > MAX_FILE_SIZE) {
+        alert('File is too big. Maximum allowed size is 5 MB.');
         return;
       }
 
@@ -135,6 +177,8 @@
 
       const plan = form.querySelector('input[name="plan"]').value;
       const price = form.querySelector('input[name="price"]').value;
+
+      loadingOverlay.style.display = 'flex'; // Show loading
 
       const reader = new FileReader();
       reader.onload = async () => {
@@ -156,13 +200,20 @@
             body: JSON.stringify(payload)
           });
 
+          loadingOverlay.style.display = 'none'; // Hide loading
+
           if (res.ok) {
             window.location.href = 'success.html';
           } else {
-            const errorText = await res.text();
-            alert('Failed to submit payment proof: ' + errorText);
+            if (res.status === 413) {
+              alert('Failed to submit payment proof: File size too large.');
+            } else {
+              const errorText = await res.text();
+              alert('Failed to submit payment proof: ' + errorText);
+            }
           }
         } catch (err) {
+          loadingOverlay.style.display = 'none'; // Hide loading
           alert('Error submitting payment proof: ' + err.message);
         }
       };
