@@ -57,7 +57,7 @@
         <img src="https://cdn.discordapp.com/attachments/1103756959261810728/1244276855359848448/binance-pay-qr.png" alt="Binance Pay QR Code" class="w-64 h-64 rounded-lg border-2 border-yellow-400 shadow-lg" />
       </div>
       <p class="text-gray-400 text-xs text-center">
-        After scanning and paying, please upload the screenshot below.
+        After scanning and paying, please upload the screenshot below and enter your transaction ID.
       </p>
     </div>
 
@@ -71,11 +71,26 @@
       <p><strong>Account Title:</strong> KHIZAR HAYAT</p>
       <p><strong>Account Number:</strong> 17907900779603</p>
       <p><strong>IBAN:</strong> PK HABB 0017907900779603</p>
+      <p class="text-gray-400 text-xs mt-2">
+        After transferring, please upload the payment proof screenshot and enter your transaction ID.
+      </p>
     </div>
 
     <!-- Shared Upload Form -->
-    <form id="paymentForm" class="space-y-6 mt-8 hidden">
+    <form id="paymentForm" class="space-y-6 mt-8 hidden" novalidate>
       <input type="hidden" id="paymentMethod" name="method" value="bank" />
+
+      <label for="transactionId" class="block mb-1 text-gray-300 font-medium">
+        Transaction ID <span class="text-yellow-400">*</span>
+      </label>
+      <input
+        id="transactionId"
+        name="transactionId"
+        type="text"
+        required
+        placeholder="Enter your transaction ID"
+        class="block w-full text-gray-300 bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+      />
 
       <label for="email" class="block mb-1 text-gray-300 font-medium">
         Email Address <span class="text-yellow-400">*</span>
@@ -173,34 +188,40 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      spinner.style.display = 'flex';
 
-      const fileInput = document.getElementById('proof');
-      const file = fileInput.files[0];
+      // Simple validation
+      const transactionId = form.querySelector('input[name="transactionId"]').value.trim();
       const email = form.querySelector('input[name="email"]').value.trim();
-      const whatsapp = form.querySelector('input[name="whatsapp"]').value.trim();
-      const plan = form.querySelector('input[name="plan"]').value;
-      const price = form.querySelector('input[name="price"]').value;
-      const method = form.querySelector('input[name="method"]').value;
+      const proofFile = document.getElementById('proof').files[0];
 
-      if (!file || !email) {
-        alert('Please fill all required fields.');
-        spinner.style.display = 'none';
+      if (!transactionId) {
+        alert('Please enter your transaction ID.');
         return;
       }
+      if (!email) {
+        alert('Please enter your email address.');
+        return;
+      }
+      if (!proofFile) {
+        alert('Please upload your payment proof.');
+        return;
+      }
+
+      spinner.style.display = 'flex';
 
       const reader = new FileReader();
       reader.onload = async () => {
         const base64File = reader.result.split(',')[1];
 
         const payload = {
-          filename: file.name,
+          filename: proofFile.name,
           fileBase64: base64File,
-          plan,
-          price,
+          plan: form.querySelector('input[name="plan"]').value,
+          price: form.querySelector('input[name="price"]').value,
           email,
-          whatsapp,
-          method
+          whatsapp: form.querySelector('input[name="whatsapp"]').value.trim(),
+          method: methodInput.value,
+          transactionId
         };
 
         try {
@@ -223,7 +244,7 @@
         }
       };
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(proofFile);
     });
   </script>
 </body>
