@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,52 +7,76 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
     body {
-      background-color: #121212;
+      background-color: #0f0f0f;
       color: #e0e0e0;
       font-family: 'Inter', sans-serif;
     }
+
+    .card-hover:hover {
+      transform: translateY(-8px) scale(1.02);
+      transition: transform 0.3s ease;
+    }
+
+    .shadow-glow {
+      box-shadow: 0 0 20px rgba(253, 224, 71, 0.3);
+    }
+
+    iframe {
+      border-radius: 0.75rem;
+    }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center px-4 py-12">
-  <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-10">
-    <h1 class="col-span-full text-4xl font-extrabold mb-12 text-yellow-400 text-center">Choose Your SuperTool Plan</h1>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 to-black px-6 py-12">
 
-    <!-- Plan Card -->
-    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
-      <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/Panelhehe.png" alt="1 Week Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
-      <h2 class="text-2xl font-semibold mb-2">1 Week Panel</h2>
-      <p class="text-gray-400 mb-6 flex-grow">Access SuperTool for 7 full days. Great for short-term needs.</p>
-      <a href="checkout.html?plan=1week" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+  <!-- Hero Header -->
+  <header class="text-center mb-16">
+    <h1 class="text-5xl font-extrabold text-yellow-400 mb-4 drop-shadow-lg">Choose Your SuperTool Plan</h1>
+    <p class="text-gray-400 text-lg max-w-2xl mx-auto">Unlock full power, full control — select the plan that fits your needs and dominate your workflow.</p>
+  </header>
+
+  <!-- Plan Cards Grid -->
+  <section class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+    <!-- 1 Week Plan -->
+    <div class="bg-gray-900 rounded-3xl p-6 shadow-xl shadow-glow card-hover flex flex-col">
+      <iframe class="w-full h-44 mb-5" src="https://www.youtube.com/embed/7zrQk8ZbYUc" title="1 Week Panel Preview" allowfullscreen></iframe>
+      <h2 class="text-2xl font-bold text-yellow-400 mb-2">1 Week</h2>
+      <p class="text-gray-400 flex-grow">Access SuperTool for 7 full days. Perfect for short bursts of power.</p>
+      <a href="checkout.html?plan=1week" class="mt-6 inline-block bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
         Buy for $5
       </a>
     </div>
 
-    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
-      <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/Panelhehe.png" alt="1 Month Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
-      <h2 class="text-2xl font-semibold mb-2">1 Month Panel</h2>
-      <p class="text-gray-400 mb-6 flex-grow">Full access for 30 days. A perfect monthly productivity boost.</p>
-      <a href="checkout.html?plan=1month" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+    <!-- 1 Month Plan -->
+    <div class="bg-gray-900 rounded-3xl p-6 shadow-xl shadow-glow card-hover flex flex-col">
+      <iframe class="w-full h-44 mb-5" src="https://www.youtube.com/embed/7zrQk8ZbYUc" title="1 Month Panel Preview" allowfullscreen></iframe>
+      <h2 class="text-2xl font-bold text-yellow-400 mb-2">1 Month</h2>
+      <p class="text-gray-400 flex-grow">Unlock full access for 30 days. A monthly charge of pure efficiency.</p>
+      <a href="checkout.html?plan=1month" class="mt-6 inline-block bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
         Buy for $9
       </a>
     </div>
 
-    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
-      <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/Panelhehe.png" alt="2 Month Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
-      <h2 class="text-2xl font-semibold mb-2">2 Month Panel</h2>
-      <p class="text-gray-400 mb-6 flex-grow">Extended access for 60 days. More time to master your tasks.</p>
-      <a href="checkout.html?plan=2months" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+    <!-- 2 Month Plan -->
+    <div class="bg-gray-900 rounded-3xl p-6 shadow-xl shadow-glow card-hover flex flex-col">
+      <iframe class="w-full h-44 mb-5" src="https://www.youtube.com/embed/7zrQk8ZbYUc" title="2 Month Panel Preview" allowfullscreen></iframe>
+      <h2 class="text-2xl font-bold text-yellow-400 mb-2">2 Months</h2>
+      <p class="text-gray-400 flex-grow">Double the time. 60 days of unlimited control and access.</p>
+      <a href="checkout.html?plan=2months" class="mt-6 inline-block bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
         Buy for $16
       </a>
     </div>
 
-    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
-      <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/Panelhehe.png" alt="Permanent Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
-      <h2 class="text-2xl font-semibold mb-2">Permanent Panel</h2>
-      <p class="text-gray-400 mb-6 flex-grow">Lifetime access to SuperTool. Pay once and use forever.</p>
-      <a href="checkout.html?plan=permanent" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+    <!-- Permanent Plan -->
+    <div class="bg-gray-900 rounded-3xl p-6 shadow-xl shadow-glow card-hover flex flex-col">
+      <iframe class="w-full h-44 mb-5" src="https://www.youtube.com/embed/7zrQk8ZbYUc" title="Permanent Panel Preview" allowfullscreen></iframe>
+      <h2 class="text-2xl font-bold text-yellow-400 mb-2">Permanent</h2>
+      <p class="text-gray-400 flex-grow">Lifetime access. One payment. Infinite domination.</p>
+      <a href="checkout.html?plan=permanent" class="mt-6 inline-block bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
         Buy for $25
       </a>
     </div>
-  </div>
+
+  </section>
 </body>
 </html>
