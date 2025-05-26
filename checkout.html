@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - SuperTool</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: #121212;
+      color: #e0e0e0;
+      font-family: 'Inter', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: #222;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4 py-12">
+  <div class="max-w-md w-full bg-gray-900 rounded-3xl shadow-xl p-10">
+    <h2 class="text-4xl font-extrabold mb-8 text-yellow-400 text-center">Choose Your Payment Method</h2>
+
+    <a
+      href="binance-pay.html"
+      class="block w-full bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-semibold py-4 rounded-xl text-center shadow-lg mb-12"
+    >
+      Pay with Binance Pay
+    </a>
+
+    <form id="paymentForm" class="space-y-8">
+      <h3 class="text-2xl font-semibold text-yellow-400 border-b border-yellow-600 pb-3 mb-6">Manual Bank Transfer</h3>
+
+      <p class="text-gray-300 text-sm mb-5 leading-relaxed">
+        Send <span class="font-bold dynamic-price text-yellow-400">$10</span> to the following bank account:
+        <br /><br />
+        <span class="block"><strong>Bank Name:</strong> Habib Bank Limited (HBL)</span>
+        <span class="block"><strong>Account Title:</strong> KHIZAR HAYAT</span>
+        <span class="block"><strong>Account Number:</strong> 17907900779603</span>
+        <span class="block"><strong>IBAN:</strong> PK HABB 0017907900779603</span>
+      </p>
+
+      <label for="proof" class="block mb-3 text-gray-300 font-medium">Upload Payment Proof</label>
+      <input
+        id="proof"
+        name="proof"
+        type="file"
+        required
+        class="block w-full text-gray-300 bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+      />
+
+      <input type="hidden" name="price" value="10" />
+      <input type="hidden" name="plan" value="default" />
+
+      <button
+        type="submit"
+        class="w-full bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 py-4 rounded-xl font-semibold shadow-lg"
+      >
+        Submit Payment
+      </button>
+    </form>
+  </div>
+
+  <script>
+    const planPrices = {
+      '1week': 5,
+      '1month': 9,
+      '2months': 16,
+      'permanent': 25
+    };
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const plan = getQueryParam('plan') || '1week';
+      const price = planPrices[plan] || 10;
+
+      document.querySelectorAll('.dynamic-price').forEach(el => el.textContent = `$${price}`);
+
+      const priceInput = document.querySelector('input[name="price"]');
+      const planInput = document.querySelector('input[name="plan"]');
+
+      if (priceInput) priceInput.value = price;
+      if (planInput) planInput.value = plan;
+    });
+
+    // NEW: Handle form submit with fetch to Netlify function
+    const form = document.getElementById('paymentForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('proof');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Please upload your payment proof file.');
+        return;
+      }
+
+      const plan = form.querySelector('input[name="plan"]').value;
+      const price = form.querySelector('input[name="price"]').value;
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64File = reader.result.split(',')[1]; // remove data:*/*;base64,
+
+        const payload = {
+          filename: file.name,
+          fileBase64: base64File,
+          plan,
+          price
+        };
+
+        try {
+          const res = await fetch('/.netlify/functions/upload-payment-proof', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (res.ok) {
+            window.location.href = 'success.html';
+          } else {
+            const errorText = await res.text();
+            alert('Failed to submit payment proof: ' + errorText);
+          }
+        } catch (err) {
+          alert('Error submitting payment proof: ' + err.message);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>

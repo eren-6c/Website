@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SuperTool - Choose Your Plan</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4 py-12">
+  <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-10">
+    <h1 class="col-span-full text-4xl font-extrabold mb-12 text-yellow-400 text-center">Choose Your SuperTool Plan</h1>
+
+    <!-- Plan Card -->
+    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
+      <img src="assets/images/supertool.jpg" alt="1 Week Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
+      <h2 class="text-2xl font-semibold mb-2">1 Week Panel</h2>
+      <p class="text-gray-400 mb-6 flex-grow">Access SuperTool for 7 full days. Great for short-term needs.</p>
+      <a href="checkout.html?plan=1week" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+        Buy for $5
+      </a>
+    </div>
+
+    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
+      <img src="assets/images/supertool.jpg" alt="1 Month Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
+      <h2 class="text-2xl font-semibold mb-2">1 Month Panel</h2>
+      <p class="text-gray-400 mb-6 flex-grow">Full access for 30 days. A perfect monthly productivity boost.</p>
+      <a href="checkout.html?plan=1month" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+        Buy for $9
+      </a>
+    </div>
+
+    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
+      <img src="assets/images/supertool.jpg" alt="2 Month Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
+      <h2 class="text-2xl font-semibold mb-2">2 Month Panel</h2>
+      <p class="text-gray-400 mb-6 flex-grow">Extended access for 60 days. More time to master your tasks.</p>
+      <a href="checkout.html?plan=2months" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+        Buy for $16
+      </a>
+    </div>
+
+    <div class="bg-gray-900 rounded-3xl shadow-xl p-6 flex flex-col">
+      <img src="assets/images/supertool.jpg" alt="Permanent Panel" class="w-full h-48 object-cover rounded-xl mb-5 shadow-md" />
+      <h2 class="text-2xl font-semibold mb-2">Permanent Panel</h2>
+      <p class="text-gray-400 mb-6 flex-grow">Lifetime access to SuperTool. Pay once and use forever.</p>
+      <a href="checkout.html?plan=permanent" class="mt-auto inline-block bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl text-center shadow-lg">
+        Buy for $25
+      </a>
+    </div>
+  </div>
+</body>
+</html>
