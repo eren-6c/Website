@@ -8,10 +8,10 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    const { filename, fileBase64, plan, price } = body;
+    const { filename, fileBase64, plan, price, email, whatsapp } = body;
 
-    if (!filename || !fileBase64) {
-      return { statusCode: 400, body: 'Missing filename or file data' };
+    if (!filename || !fileBase64 || !email) {
+      return { statusCode: 400, body: 'Missing required fields (filename, fileBase64, or email)' };
     }
 
     // Convert base64 to Buffer
@@ -28,7 +28,7 @@ exports.handler = async (event) => {
 
     const uguuData = await uguuRes.json();
     if (!uguuData || !uguuData.files || !uguuData.files[0]) {
-      return { statusCode: 500, body: 'Failed to upload image to Uguu' };
+      return { statusCode: 500, body: 'Failed to upload file to Uguu' };
     }
 
     const imageUrl = uguuData.files[0].url;
@@ -43,9 +43,11 @@ exports.handler = async (event) => {
           title: "💸 New Payment Proof Uploaded",
           color: 0xfcd34d,
           fields: [
-            { name: "📄 Filename", value: filename },
+            { name: "📄 Filename", value: filename, inline: true },
             { name: "💼 Plan", value: plan || "N/A", inline: true },
             { name: "💰 Price", value: `$${price || "N/A"}`, inline: true },
+            { name: "📧 Email", value: email, inline: false },
+            { name: "📱 WhatsApp", value: whatsapp ? whatsapp : "Not provided", inline: false },
           ],
           image: { url: imageUrl },
           timestamp: new Date().toISOString(),
