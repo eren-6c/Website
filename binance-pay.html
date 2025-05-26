@@ -11,13 +11,83 @@
       color: #e0e0e0;
       font-family: 'Inter', sans-serif;
     }
+    #loading {
+      display: none;
+    }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen px-4">
   <div class="bg-gray-900 p-8 rounded-3xl shadow-xl max-w-md w-full text-center">
     <h2 class="text-2xl font-extrabold text-yellow-400 mb-6">Scan to Pay with Binance Pay</h2>
-    <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/IMG_20250526_085006.jpg" alt="Binance QR" class="mx-auto rounded-lg shadow-md" />
-    <p class="mt-6 text-gray-400 text-sm">After payment, you will be redirected automatically.</p>
+    <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/IMG_20250526_085006.jpg" alt="Binance QR" class="mx-auto rounded-lg shadow-md mb-6" />
+    
+    <form id="paymentForm" class="space-y-4 text-left">
+      <input type="email" name="email" required placeholder="Your Email" class="w-full p-3 rounded-xl bg-gray-800 text-white border border-gray-700" />
+      <input type="text" name="whatsapp" placeholder="WhatsApp Number (optional)" class="w-full p-3 rounded-xl bg-gray-800 text-white border border-gray-700" />
+      <input type="text" name="transactionId" required placeholder="Transaction ID" class="w-full p-3 rounded-xl bg-gray-800 text-white border border-gray-700" />
+      <input type="file" name="screenshot" required accept="image/*" class="w-full p-3 bg-gray-800 text-white rounded-xl border border-gray-700" />
+      
+      <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-3 rounded-xl shadow-md">
+        Send Payment Proof
+      </button>
+    </form>
+
+    <div id="loading" class="mt-6 text-yellow-400 font-semibold animate-pulse">Uploading payment proof...</div>
+    <div id="message" class="mt-4 text-sm"></div>
   </div>
+
+  <script>
+    const form = document.getElementById("paymentForm");
+    const loading = document.getElementById("loading");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loading.style.display = "block";
+      message.textContent = "";
+
+      const email = form.email.value;
+      const whatsapp = form.whatsapp.value;
+      const transactionId = form.transactionId.value;
+      const fileInput = form.screenshot.files[0];
+
+      if (!fileInput) {
+        alert("Please select an image.");
+        loading.style.display = "none";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const fileBase64 = reader.result.split(',')[1];
+        const body = {
+          filename: fileInput.name,
+          fileBase64,
+          email,
+          whatsapp,
+          plan: "Binance",
+          price: "Manual",
+          transactionId
+        };
+
+        try {
+          const res = await fetch("/.netlify/functions/payment-proof", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+
+          const data = await res.json();
+          loading.style.display = "none";
+          message.textContent = data.message || "Successfully sent!";
+        } catch (err) {
+          loading.style.display = "none";
+          message.textContent = "Upload failed. Try again.";
+        }
+      };
+
+      reader.readAsDataURL(fileInput);
+    });
+  </script>
 </body>
 </html>
