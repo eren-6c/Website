@@ -47,8 +47,8 @@
       </button>
     </div>
 
-    <!-- Binance Pay QR Code Section (Initially Hidden) -->
-    <div id="binancePaySection" class="hidden space-y-6 mt-8">
+    <!-- Binance Pay QR Section -->
+    <div id="binancePaySection" class="hidden space-y-6">
       <h3 class="text-2xl font-semibold text-yellow-400 border-b border-yellow-600 pb-3">Binance Pay</h3>
       <p class="text-gray-300 text-sm mb-4">
         Scan the QR code below using your Binance App to pay <span class="font-bold dynamic-price text-yellow-400">$10</span>:
@@ -57,22 +57,25 @@
         <img src="https://cdn.discordapp.com/attachments/1103756959261810728/1244276855359848448/binance-pay-qr.png" alt="Binance Pay QR Code" class="w-64 h-64 rounded-lg border-2 border-yellow-400 shadow-lg" />
       </div>
       <p class="text-gray-400 text-xs text-center">
-        After payment, please submit proof using the bank transfer form below.
+        After scanning and paying, please upload the screenshot below.
       </p>
     </div>
 
-    <!-- Bank transfer form (Initially Hidden) -->
-    <form id="paymentForm" class="space-y-6 hidden mt-8">
-      <h3 class="text-2xl font-semibold text-yellow-400 border-b border-yellow-600 pb-3 mb-6">Manual Bank Transfer</h3>
-
-      <p class="text-gray-300 text-sm mb-5 leading-relaxed">
+    <!-- Bank Details Section -->
+    <div id="bankDetailsSection" class="hidden space-y-4 text-sm text-gray-300">
+      <h3 class="text-2xl font-semibold text-yellow-400 border-b border-yellow-600 pb-3">Bank Transfer</h3>
+      <p>
         Send <span class="font-bold dynamic-price text-yellow-400">$10</span> to the following bank account:
-        <br /><br />
-        <span class="block"><strong>Bank:</strong> Habib Bank Limited (HBL)</span>
-        <span class="block"><strong>Account Title:</strong> KHIZAR HAYAT</span>
-        <span class="block"><strong>Account Number:</strong> 17907900779603</span>
-        <span class="block"><strong>IBAN:</strong> PK HABB 0017907900779603</span>
       </p>
+      <p><strong>Bank:</strong> Habib Bank Limited (HBL)</p>
+      <p><strong>Account Title:</strong> KHIZAR HAYAT</p>
+      <p><strong>Account Number:</strong> 17907900779603</p>
+      <p><strong>IBAN:</strong> PK HABB 0017907900779603</p>
+    </div>
+
+    <!-- Shared Upload Form -->
+    <form id="paymentForm" class="space-y-6 mt-8 hidden">
+      <input type="hidden" id="paymentMethod" name="method" value="bank" />
 
       <label for="email" class="block mb-1 text-gray-300 font-medium">
         Email Address <span class="text-yellow-400">*</span>
@@ -142,28 +145,31 @@
       const price = planPrices[plan] || 10;
 
       document.querySelectorAll('.dynamic-price').forEach(el => el.textContent = `$${price}`);
-
-      const priceInput = document.querySelector('input[name="price"]');
-      const planInput = document.querySelector('input[name="plan"]');
-
-      if (priceInput) priceInput.value = price;
-      if (planInput) planInput.value = plan;
+      document.querySelector('input[name="price"]').value = price;
+      document.querySelector('input[name="plan"]').value = plan;
     });
 
-    // Show/Hide logic
-    document.getElementById('showBankFormBtn').addEventListener('click', () => {
-      document.getElementById('paymentForm').classList.remove('hidden');
-      document.getElementById('binancePaySection').classList.add('hidden');
-    });
-
-    document.getElementById('showBinanceBtn').addEventListener('click', () => {
-      document.getElementById('binancePaySection').classList.remove('hidden');
-      document.getElementById('paymentForm').classList.add('hidden');
-    });
-
-    // Form submission with loader
+    const binanceBtn = document.getElementById('showBinanceBtn');
+    const bankBtn = document.getElementById('showBankFormBtn');
     const form = document.getElementById('paymentForm');
+    const bankDetails = document.getElementById('bankDetailsSection');
+    const binanceSection = document.getElementById('binancePaySection');
+    const methodInput = document.getElementById('paymentMethod');
     const spinner = document.getElementById('loadingSpinner');
+
+    binanceBtn.addEventListener('click', () => {
+      methodInput.value = 'binance';
+      binanceSection.classList.remove('hidden');
+      bankDetails.classList.add('hidden');
+      form.classList.remove('hidden');
+    });
+
+    bankBtn.addEventListener('click', () => {
+      methodInput.value = 'bank';
+      binanceSection.classList.add('hidden');
+      bankDetails.classList.remove('hidden');
+      form.classList.remove('hidden');
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -171,22 +177,17 @@
 
       const fileInput = document.getElementById('proof');
       const file = fileInput.files[0];
-      if (!file) {
-        alert('Please upload your payment proof file.');
-        spinner.style.display = 'none';
-        return;
-      }
-
       const email = form.querySelector('input[name="email"]').value.trim();
-      if (!email) {
-        alert('Please enter a valid email address.');
-        spinner.style.display = 'none';
-        return;
-      }
-
       const whatsapp = form.querySelector('input[name="whatsapp"]').value.trim();
       const plan = form.querySelector('input[name="plan"]').value;
       const price = form.querySelector('input[name="price"]').value;
+      const method = form.querySelector('input[name="method"]').value;
+
+      if (!file || !email) {
+        alert('Please fill all required fields.');
+        spinner.style.display = 'none';
+        return;
+      }
 
       const reader = new FileReader();
       reader.onload = async () => {
@@ -198,7 +199,8 @@
           plan,
           price,
           email,
-          whatsapp
+          whatsapp,
+          method
         };
 
         try {
@@ -212,7 +214,7 @@
             window.location.href = 'success.html';
           } else {
             const errorText = await res.text();
-            alert('Upload failed: ' + (errorText.includes("limit") ? "File too big!" : errorText));
+            alert('Upload failed: ' + errorText);
           }
         } catch (err) {
           alert('Error uploading: ' + err.message);
