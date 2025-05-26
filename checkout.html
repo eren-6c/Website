@@ -34,7 +34,7 @@
       Pay with Binance Pay
     </a>
 
-    <form id="paymentForm" class="space-y-8">
+    <form id="paymentForm" class="space-y-6">
       <h3 class="text-2xl font-semibold text-yellow-400 border-b border-yellow-600 pb-3 mb-6">Manual Bank Transfer</h3>
 
       <p class="text-gray-300 text-sm mb-5 leading-relaxed">
@@ -46,7 +46,28 @@
         <span class="block"><strong>IBAN:</strong> PK HABB 0017907900779603</span>
       </p>
 
-      <label for="proof" class="block mb-3 text-gray-300 font-medium">Upload Payment Proof</label>
+      <label for="email" class="block mb-1 text-gray-300 font-medium">
+        Email Address <span class="text-yellow-400">*</span>
+      </label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        required
+        placeholder="you@example.com"
+        class="block w-full text-gray-300 bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+      />
+
+      <label for="whatsapp" class="block mb-1 text-gray-300 font-medium">WhatsApp Number (Optional)</label>
+      <input
+        id="whatsapp"
+        name="whatsapp"
+        type="tel"
+        placeholder="+92 300 1234567"
+        class="block w-full text-gray-300 bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 mb-6 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+      />
+
+      <label for="proof" class="block mb-1 text-gray-300 font-medium">Upload Payment Proof <span class="text-yellow-400">*</span></label>
       <input
         id="proof"
         name="proof"
@@ -93,7 +114,6 @@
       if (planInput) planInput.value = plan;
     });
 
-    // NEW: Handle form submit with fetch to Netlify function
     const form = document.getElementById('paymentForm');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -104,6 +124,14 @@
         alert('Please upload your payment proof file.');
         return;
       }
+
+      const email = form.querySelector('input[name="email"]').value.trim();
+      if (!email) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      const whatsapp = form.querySelector('input[name="whatsapp"]').value.trim();
 
       const plan = form.querySelector('input[name="plan"]').value;
       const price = form.querySelector('input[name="price"]').value;
@@ -116,7 +144,9 @@
           filename: file.name,
           fileBase64: base64File,
           plan,
-          price
+          price,
+          email,
+          whatsapp,
         };
 
         try {
