@@ -11,13 +11,66 @@
       color: #e0e0e0;
       font-family: 'Inter', sans-serif;
     }
+
+    #loadingSpinner {
+      display: none;
+    }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen px-4">
   <div class="bg-gray-900 p-8 rounded-3xl shadow-xl max-w-md w-full text-center">
     <h2 class="text-2xl font-extrabold text-yellow-400 mb-6">Scan to Pay with Binance Pay</h2>
-    <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/IMG_20250526_085006.jpg" alt="Binance QR" class="mx-auto rounded-lg shadow-md" />
-    <p class="mt-6 text-gray-400 text-sm">After payment, you will be redirected automatically.</p>
+    <img src="https://raw.githubusercontent.com/eren-6c/binanceiamge/main/IMG_20250526_085006.jpg" alt="Binance QR" class="mx-auto rounded-lg shadow-md mb-6" />
+    <form id="paymentForm" class="space-y-4 text-left">
+      <div>
+        <label class="block mb-1 text-sm">Email <span class="text-red-500">*</span></label>
+        <input type="email" name="email" required class="w-full px-4 py-2 rounded-xl bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+      </div>
+      <div>
+        <label class="block mb-1 text-sm">Transaction ID <span class="text-red-500">*</span></label>
+        <input type="text" name="transactionId" required class="w-full px-4 py-2 rounded-xl bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+      </div>
+      <div>
+        <label class="block mb-1 text-sm">Phone Number (Optional)</label>
+        <input type="text" name="phone" class="w-full px-4 py-2 rounded-xl bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+      </div>
+      <div>
+        <label class="block mb-1 text-sm">Upload Payment Proof <span class="text-red-500">*</span></label>
+        <input type="file" name="proof" accept="image/*" required class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-xl text-sm text-gray-300" />
+      </div>
+      <button
+        type="submit"
+        id="submitBtn"
+        class="w-full bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-bold py-3 rounded-xl shadow-lg mt-4"
+      >
+        Send Payment Proof
+      </button>
+      <div id="loadingSpinner" class="text-yellow-400 text-center mt-4 animate-pulse">
+        Uploading... Please wait.
+      </div>
+    </form>
+    <p class="mt-6 text-gray-400 text-sm text-center">After payment, you will be redirected automatically.</p>
   </div>
+
+  <script>
+    const form = document.getElementById("paymentForm");
+    const loading = document.getElementById("loadingSpinner");
+    const submitBtn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      loading.style.display = "block";
+
+      // Simulate sending form (replace with your actual backend integration)
+      setTimeout(() => {
+        loading.textContent = "Payment proof sent successfully!";
+        loading.classList.remove("animate-pulse");
+        loading.classList.add("text-green-400");
+        // Uncomment to auto-redirect after sending:
+        // window.location.href = "success.html";
+      }, 3000);
+    });
+  </script>
 </body>
 </html>
