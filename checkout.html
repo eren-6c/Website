@@ -24,24 +24,24 @@
 
     /* Loading overlay styles */
     #loadingOverlay {
-      display: none;
+      display: none; /* hidden initially */
       position: fixed;
       inset: 0;
       background-color: rgba(18, 18, 18, 0.85);
       z-index: 9999;
       backdrop-filter: blur(4px);
-      display: flex;
       justify-content: center;
       align-items: center;
+      /* We'll show this as flex only when loading */
     }
 
-    /* Simple spinner */
+    /* Loader spinner */
     .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #facc15; /* Tailwind yellow-400 */
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #facc15; /* yellow-400 */
       border-radius: 50%;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       animation: spin 1s linear infinite;
     }
 
@@ -116,9 +116,9 @@
     </form>
   </div>
 
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay" aria-live="assertive" role="alert" aria-label="Loading">
-    <div class="spinner" aria-hidden="true"></div>
+  <!-- Loading overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner" aria-label="Loading..."></div>
   </div>
 
   <script>
@@ -149,7 +149,6 @@
 
     const form = document.getElementById('paymentForm');
     const loadingOverlay = document.getElementById('loadingOverlay');
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB max file size
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -161,12 +160,6 @@
         return;
       }
 
-      // Check file size before submitting
-      if (file.size > MAX_FILE_SIZE) {
-        alert('File is too big. Maximum allowed size is 5 MB.');
-        return;
-      }
-
       const email = form.querySelector('input[name="email"]').value.trim();
       if (!email) {
         alert('Please enter a valid email address.');
@@ -174,11 +167,11 @@
       }
 
       const whatsapp = form.querySelector('input[name="whatsapp"]').value.trim();
-
       const plan = form.querySelector('input[name="plan"]').value;
       const price = form.querySelector('input[name="price"]').value;
 
-      loadingOverlay.style.display = 'flex'; // Show loading
+      // Show loading overlay
+      loadingOverlay.style.display = 'flex';
 
       const reader = new FileReader();
       reader.onload = async () => {
@@ -200,20 +193,23 @@
             body: JSON.stringify(payload)
           });
 
-          loadingOverlay.style.display = 'none'; // Hide loading
-
           if (res.ok) {
+            // Hide loading
+            loadingOverlay.style.display = 'none';
+            // Redirect success page
             window.location.href = 'success.html';
           } else {
-            if (res.status === 413) {
-              alert('Failed to submit payment proof: File size too large.');
+            const errorText = await res.text();
+            loadingOverlay.style.display = 'none';
+
+            if (errorText.toLowerCase().includes('file too big')) {
+              alert('Failed to submit payment proof: File is too big.');
             } else {
-              const errorText = await res.text();
               alert('Failed to submit payment proof: ' + errorText);
             }
           }
         } catch (err) {
-          loadingOverlay.style.display = 'none'; // Hide loading
+          loadingOverlay.style.display = 'none';
           alert('Error submitting payment proof: ' + err.message);
         }
       };
