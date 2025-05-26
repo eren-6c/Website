@@ -11,64 +11,47 @@
       color: #e0e0e0;
       font-family: 'Inter', sans-serif;
     }
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-track {
-      background-color: #222;
-    }
-
-    /* Loading overlay styles */
-    #loadingOverlay {
-      display: none; /* hidden initially */
+    #loadingSpinner {
       position: fixed;
-      inset: 0;
-      background-color: rgba(18, 18, 18, 0.85);
-      z-index: 9999;
-      backdrop-filter: blur(4px);
-      justify-content: center;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.75);
+      display: flex;
       align-items: center;
-      /* We'll show this as flex only when loading */
-    }
-
-    /* Loader spinner */
-    .spinner {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #facc15; /* yellow-400 */
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      justify-content: center;
+      z-index: 9999;
+      display: none;
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center px-4 py-12 relative">
+<body class="min-h-screen flex items-center justify-center px-4 py-12">
   <div class="max-w-md w-full bg-gray-900 rounded-3xl shadow-xl p-10">
     <h2 class="text-4xl font-extrabold mb-8 text-yellow-400 text-center">Choose Your Payment Method</h2>
 
-    <a
-      href="binance-pay.html"
-      class="block w-full bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-semibold py-4 rounded-xl text-center shadow-lg mb-12"
-    >
-      Pay with Binance Pay
-    </a>
+    <div class="flex flex-col sm:flex-row gap-4 mb-8">
+      <a
+        href="binance-pay.html"
+        class="flex-1 bg-yellow-500 hover:bg-yellow-600 transition-colors duration-300 text-gray-900 font-semibold py-4 rounded-xl text-center shadow-lg"
+      >
+        Pay with Binance Pay
+      </a>
+      <button
+        id="showBankFormBtn"
+        type="button"
+        class="flex-1 bg-gray-700 hover:bg-gray-600 transition-colors duration-300 text-yellow-400 font-semibold py-4 rounded-xl shadow-lg"
+      >
+        Pay with Bank Transfer
+      </button>
+    </div>
 
-    <form id="paymentForm" class="space-y-6">
+    <!-- Bank transfer form -->
+    <form id="paymentForm" class="space-y-6 hidden">
       <h3 class="text-2xl font-semibold text-yellow-400 border-b border-yellow-600 pb-3 mb-6">Manual Bank Transfer</h3>
 
       <p class="text-gray-300 text-sm mb-5 leading-relaxed">
         Send <span class="font-bold dynamic-price text-yellow-400">$10</span> to the following bank account:
         <br /><br />
-        <span class="block"><strong>Bank Name:</strong> Habib Bank Limited (HBL)</span>
+        <span class="block"><strong>Bank:</strong> Habib Bank Limited (HBL)</span>
         <span class="block"><strong>Account Title:</strong> KHIZAR HAYAT</span>
         <span class="block"><strong>Account Number:</strong> 17907900779603</span>
         <span class="block"><strong>IBAN:</strong> PK HABB 0017907900779603</span>
@@ -92,7 +75,7 @@
         name="whatsapp"
         type="tel"
         placeholder="+92 300 1234567"
-        class="block w-full text-gray-300 bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 mb-6 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+        class="block w-full text-gray-300 bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
       />
 
       <label for="proof" class="block mb-1 text-gray-300 font-medium">Upload Payment Proof <span class="text-yellow-400">*</span></label>
@@ -116,9 +99,12 @@
     </form>
   </div>
 
-  <!-- Loading overlay -->
-  <div id="loadingOverlay">
-    <div class="spinner" aria-label="Loading..."></div>
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner">
+    <svg class="animate-spin h-12 w-12 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
   </div>
 
   <script>
@@ -147,22 +133,31 @@
       if (planInput) planInput.value = plan;
     });
 
+    // Show form on button click
+    document.getElementById('showBankFormBtn').addEventListener('click', () => {
+      document.getElementById('paymentForm').classList.remove('hidden');
+    });
+
+    // Form submission with loader
     const form = document.getElementById('paymentForm');
-    const loadingOverlay = document.getElementById('loadingOverlay');
+    const spinner = document.getElementById('loadingSpinner');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      spinner.style.display = 'flex';
 
       const fileInput = document.getElementById('proof');
       const file = fileInput.files[0];
       if (!file) {
         alert('Please upload your payment proof file.');
+        spinner.style.display = 'none';
         return;
       }
 
       const email = form.querySelector('input[name="email"]').value.trim();
       if (!email) {
         alert('Please enter a valid email address.');
+        spinner.style.display = 'none';
         return;
       }
 
@@ -170,12 +165,9 @@
       const plan = form.querySelector('input[name="plan"]').value;
       const price = form.querySelector('input[name="price"]').value;
 
-      // Show loading overlay
-      loadingOverlay.style.display = 'flex';
-
       const reader = new FileReader();
       reader.onload = async () => {
-        const base64File = reader.result.split(',')[1]; // remove data:*/*;base64,
+        const base64File = reader.result.split(',')[1];
 
         const payload = {
           filename: file.name,
@@ -183,7 +175,7 @@
           plan,
           price,
           email,
-          whatsapp,
+          whatsapp
         };
 
         try {
@@ -194,23 +186,15 @@
           });
 
           if (res.ok) {
-            // Hide loading
-            loadingOverlay.style.display = 'none';
-            // Redirect success page
             window.location.href = 'success.html';
           } else {
             const errorText = await res.text();
-            loadingOverlay.style.display = 'none';
-
-            if (errorText.toLowerCase().includes('file too big')) {
-              alert('Failed to submit payment proof: File is too big.');
-            } else {
-              alert('Failed to submit payment proof: ' + errorText);
-            }
+            alert('Upload failed: ' + (errorText.includes("limit") ? "File too big!" : errorText));
           }
         } catch (err) {
-          loadingOverlay.style.display = 'none';
-          alert('Error submitting payment proof: ' + err.message);
+          alert('Error uploading: ' + err.message);
+        } finally {
+          spinner.style.display = 'none';
         }
       };
 
