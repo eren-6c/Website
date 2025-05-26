@@ -1,11 +1,9 @@
 const fetch = require('node-fetch');
+const FormData = require('form-data');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: 'Method Not Allowed',
-    };
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
@@ -13,63 +11,61 @@ exports.handler = async (event) => {
     const { filename, fileBase64, plan, price } = body;
 
     if (!filename || !fileBase64) {
-      return {
-        statusCode: 400,
-        body: 'Missing filename or file data',
-      };
+      return { statusCode: 400, body: 'Missing filename or file data' };
     }
 
-    // Prepare Discord webhook
+    // Convert base64 to Buffer
+    const buffer = Buffer.from(fileBase64, 'base64');
+
+    // Upload to uguu.se
+    const form = new FormData();
+    form.append('files[]', buffer, filename);
+
+    const uguuRes = await fetch('https://uguu.se/upload.php', {
+      method: 'POST',
+      body: form,
+    });
+
+    const uguuData = await uguuRes.json();
+    if (!uguuData || !uguuData.files || !uguuData.files[0]) {
+      return { statusCode: 500, body: 'Failed to upload image to Uguu' };
+    }
+
+    const imageUrl = uguuData.files[0].url;
+
+    // Send to Discord
     const webhookUrl = "https://discord.com/api/webhooks/1370172729373753385/qctRLVkOCH9kOlys-aBmXrJokfPjJLcG8U7VHx7RNBlhkDsdhO910nwsYVLqVulCwGpf";
 
-    const webhookPayload = {
+    const discordPayload = {
       username: "Payment Bot",
       embeds: [
         {
           title: "💸 New Payment Proof Uploaded",
-          color: 0xfcd34d, // Tailwind yellow-400
+          color: 0xfcd34d,
           fields: [
-            {
-              name: "📄 Filename",
-              value: filename,
-              inline: false,
-            },
-            {
-              name: "💼 Plan",
-              value: plan || "N/A",
-              inline: true,
-            },
-            {
-              name: "💰 Price",
-              value: `$${price || "N/A"}`,
-              inline: true,
-            }
+            { name: "📄 Filename", value: filename },
+            { name: "💼 Plan", value: plan || "N/A", inline: true },
+            { name: "💰 Price", value: `$${price || "N/A"}`, inline: true },
           ],
-          footer: {
-            text: "Submitted at"
-          },
-          timestamp: new Date().toISOString()
-        }
-      ]
+          image: { url: imageUrl },
+          timestamp: new Date().toISOString(),
+        },
+      ],
     };
 
     await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(webhookPayload),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(discordPayload),
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Payment proof sent successfully!" }),
+      body: JSON.stringify({ message: 'Payment proof sent via Uguu + Discord!' }),
     };
+
   } catch (err) {
-    console.error("Webhook error:", err);
-    return {
-      statusCode: 500,
-      body: 'Failed to send webhook message',
-    };
+    console.error('Error:', err);
+    return { statusCode: 500, body: 'Server error' };
   }
 };
