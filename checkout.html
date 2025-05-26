@@ -120,7 +120,7 @@
         };
 
         try {
-          const res = await fetch('/.netlify/functions/upload-payment-proof', {
+          const res = await fetch('upload-payment-proof', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
