@@ -1,72 +1,74 @@
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 
-exports.handler = async function (event, context) {
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: 'Method Not Allowed',
-    };
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
     const body = JSON.parse(event.body);
     const { filename, fileBase64, plan, price, email, whatsapp, transactionId } = body;
 
-    if (!filename || !fileBase64 || !email || !transactionId || !plan || !price) {
-      return {
-        statusCode: 400,
-        body: 'Missing required fields',
-      };
+    if (!filename || !fileBase64 || !email) {
+      return { statusCode: 400, body: 'Missing required fields (filename, fileBase64, or email)' };
     }
 
-    // Decode base64 and upload to uguu.se
-    const fileBuffer = Buffer.from(fileBase64, 'base64');
-    const formData = new FormData();
-    formData.append('files[]', fileBuffer, filename);
+    // Convert base64 to Buffer
+    const buffer = Buffer.from(fileBase64, 'base64');
+
+    // Upload to uguu.se
+    const form = new FormData();
+    form.append('files[]', buffer, filename);
 
     const uguuRes = await fetch('https://uguu.se/upload.php', {
       method: 'POST',
-      body: formData,
+      body: form,
     });
 
-    const uguuJson = await uguuRes.json();
-    if (!uguuJson.files || !uguuJson.files[0] || !uguuJson.files[0].url) {
-      throw new Error('Failed to upload to uguu.se');
+    const uguuData = await uguuRes.json();
+    if (!uguuData || !uguuData.files || !uguuData.files[0]) {
+      return { statusCode: 500, body: 'Failed to upload file to Uguu' };
     }
 
-    const fileUrl = uguuJson.files[0].url;
+    const imageUrl = uguuData.files[0].url;
 
-    // Send to Discord webhook
-    const webhookUrl = 'https://discord.com/api/webhooks/XXXX/XXXXXX'; // Replace with your webhook
-    const embed = {
-      title: '📨 New Binance Pay Submission',
-      color: 0xffd700,
-      fields: [
-        { name: '📧 Email', value: email, inline: false },
-        { name: '📱 WhatsApp', value: whatsapp || 'Not provided', inline: false },
-        { name: '💸 Plan', value: plan, inline: true },
-        { name: '💵 Price', value: `$${price}`, inline: true },
-        { name: '🆔 Transaction ID', value: transactionId || 'Not provided', inline: false },
-        { name: '📎 Payment Proof', value: `[View Image](${fileUrl})`, inline: false },
+    // Send to Discord
+    const webhookUrl = "https://discord.com/api/webhooks/1370172729373753385/qctRLVkOCH9kOlys-aBmXrJokfPjJLcG8U7VHx7RNBlhkDsdhO910nwsYVLqVulCwGpf";
+
+    const discordPayload = {
+      username: "Payment Bot",
+      embeds: [
+        {
+          title: "💸 New Payment Proof Uploaded",
+          color: 0xfcd34d,
+          fields: [
+            { name: "📄 Filename", value: filename, inline: true },
+            { name: "💼 Plan", value: plan || "N/A", inline: true },
+            { name: "💰 Price", value: `$${price || "N/A"}`, inline: true },
+            { name: "📧 Email", value: email, inline: false },
+            { name: "📱 WhatsApp", value: whatsapp || "Not provided", inline: false },
+            { name: "🆔 Transaction ID", value: transactionId || "Not provided", inline: false },
+          ],
+          image: { url: imageUrl },
+          timestamp: new Date().toISOString(),
+        },
       ],
-      timestamp: new Date().toISOString(),
     };
 
     await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ embeds: [embed] }),
+      body: JSON.stringify(discordPayload),
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Success', imageUrl: fileUrl }),
+      body: JSON.stringify({ message: 'Payment proof sent via Uguu + Discord!' }),
     };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: `Server Error: ${error.message}`,
-    };
+
+  } catch (err) {
+    console.error('Error:', err);
+    return { statusCode: 500, body: 'Server error' };
   }
 };
