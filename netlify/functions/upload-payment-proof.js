@@ -43,9 +43,12 @@ exports.handler = async (event) => {
           title: "💸 New Payment Proof Uploaded",
           color: 0xfcd34d,
           fields: [
-            { name: "📄 Filename", value: filename },
-            { name: "💼 Plan", value: plan || "N/A", inline: true },
-            { name: "💰 Price", value: `$${price || "N/A"}`, inline: true },
+            { name: "Filename", value: filename, inline: true },
+        { name: "Plan", value: plan || "N/A", inline: true },
+        { name: "Price", value: `$${price || "N/A"}`, inline: true },
+        { name: "Email", value: email, inline: false },
+        { name: "WhatsApp", value: whatsapp ? whatsapp : "Not provided", inline: false },
+        { name: "Time", value: new Date().toISOString(), inline: false }
           ],
           image: { url: imageUrl },
           timestamp: new Date().toISOString(),
