@@ -34,7 +34,7 @@
     </section>
 
     <!-- Payment Options -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
       <button id="showBinanceBtn"
         class="bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-5 px-6 rounded-2xl shadow-lg text-xl">
         Pay with Binance Pay
@@ -42,6 +42,14 @@
       <button id="showBankFormBtn"
         class="bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-5 px-6 rounded-2xl shadow-lg text-xl">
         Pay with Bank Transfer
+      </button>
+      <button id="showJazzCashBtn"
+        class="bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-5 px-6 rounded-2xl shadow-lg text-xl">
+        Pay with JazzCash
+      </button>
+      <button id="showEasypaisaBtn"
+        class="bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-5 px-6 rounded-2xl shadow-lg text-xl">
+        Pay with Easypaisa
       </button>
     </section>
 
@@ -70,6 +78,33 @@
         <li><strong>Account Title:</strong> KHIZAR HAYAT</li>
         <li><strong>Account Number:</strong> 17907900779603</li>
         <li><strong>IBAN:</strong> PK HABB 0017907900779603</li>
+      </ul>
+      <p class="text-gray-400 text-xs">
+        After transferring, upload the payment proof and transaction ID below.
+      </p>
+    </section>
+
+    <!-- JazzCash Section -->
+    <section id="jazzCashSection" class="hidden space-y-4 border-t border-yellow-600 pt-8 text-sm text-gray-300">
+      <h2 class="text-3xl font-bold text-yellow-400">JazzCash</h2>
+      <p>Send <span class="font-bold dynamic-price text-yellow-400">$10</span> to:</p>
+      <ul class="space-y-1">
+        <li><strong>Account Title:</strong> Raheela Naz</li>
+        <li><strong>Mobile Number:</strong> 03338643259</li>
+      </ul>
+      <p class="text-gray-400 text-xs">
+        After transferring, upload the payment proof and transaction ID below.
+      </p>
+    </section>
+
+    <!-- Easypaisa Section -->
+    <section id="easypaisaSection" class="hidden space-y-4 border-t border-yellow-600 pt-8 text-sm text-gray-300">
+      <h2 class="text-3xl font-bold text-yellow-400">Easypaisa</h2>
+      <p>Send <span class="font-bold dynamic-price text-yellow-400">$10</span> to:</p>
+      <ul class="space-y-1">
+        <li><strong>Account Title:</strong> Raheela Naz</li>
+        <li><strong>Mobile Number:</strong> 03338643259</li>
+      
       </ul>
       <p class="text-gray-400 text-xs">
         After transferring, upload the payment proof and transaction ID below.
@@ -146,23 +181,49 @@
 
     const binanceBtn = document.getElementById('showBinanceBtn');
     const bankBtn = document.getElementById('showBankFormBtn');
+    const jazzCashBtn = document.getElementById('showJazzCashBtn');
+    const easyPaisaBtn = document.getElementById('showEasypaisaBtn');
+
     const form = document.getElementById('paymentForm');
     const bankDetails = document.getElementById('bankDetailsSection');
     const binanceSection = document.getElementById('binancePaySection');
+    const jazzCashSection = document.getElementById('jazzCashSection');
+    const easypaisaSection = document.getElementById('easypaisaSection');
     const methodInput = document.getElementById('paymentMethod');
     const spinner = document.getElementById('loadingSpinner');
 
+    function hideAllPaymentSections() {
+      bankDetails.classList.add('hidden');
+      binanceSection.classList.add('hidden');
+      jazzCashSection.classList.add('hidden');
+      easypaisaSection.classList.add('hidden');
+    }
+
     binanceBtn.addEventListener('click', () => {
       methodInput.value = 'binance';
+      hideAllPaymentSections();
       binanceSection.classList.remove('hidden');
-      bankDetails.classList.add('hidden');
       form.classList.remove('hidden');
     });
 
     bankBtn.addEventListener('click', () => {
       methodInput.value = 'bank';
-      binanceSection.classList.add('hidden');
+      hideAllPaymentSections();
       bankDetails.classList.remove('hidden');
+      form.classList.remove('hidden');
+    });
+
+    jazzCashBtn.addEventListener('click', () => {
+      methodInput.value = 'jazzcash';
+      hideAllPaymentSections();
+      jazzCashSection.classList.remove('hidden');
+      form.classList.remove('hidden');
+    });
+
+    easyPaisaBtn.addEventListener('click', () => {
+      methodInput.value = 'easypaisa';
+      hideAllPaymentSections();
+      easypaisaSection.classList.remove('hidden');
       form.classList.remove('hidden');
     });
 
