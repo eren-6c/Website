@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Eren Xiters - Choose Your Plan</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=aspect-ratio"></script>
   <style>
     body {
       background: radial-gradient(circle at center, #0f0f0f 30%, #000000 100%);
@@ -83,6 +84,20 @@
       Choose the power level that suits your mission. Tap in, dominate, repeat.
     </p>
   </header>
+
+  <!-- YouTube Video Section -->
+  <section class="relative z-10 my-16 max-w-4xl mx-auto">
+    <div class="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden shadow-glow border-animate">
+      <iframe 
+        class="w-full h-full"
+        src="https://www.youtube.com/embed/2XajJmtTGA0" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </section>
 
   <!-- Plan Cards Grid -->
   <section class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
