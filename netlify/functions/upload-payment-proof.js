@@ -34,7 +34,7 @@ exports.handler = async (event) => {
     const imageUrl = uguuData.files[0].url;
 
     // Send to Discord
-    const webhookUrl = "https://discord.com/api/webhooks/1385008638057250836/1mdNvs_4nvRdP3ErztlAgAEoTDigHB6_G-DzSJKA4BZs0f0ilf-SFrJ1qJXebOpOVlGB";
+    const webhookUrl = "https://discord.com/api/webhooks/1386516939412602890/sfBkNaTul5hZgi5YqlToY5B3YGx8epSoDv40LKdNrcGfMwx9yYtPoqsFpqRdcxODaotZ";
 
     const discordPayload = {
       username: "Payment Bot",
