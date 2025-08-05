@@ -34,28 +34,29 @@ exports.handler = async (event) => {
     const imageUrl = uguuData.files[0].url;
 
     // Send to Discord
-    const webhookUrl = "https://discord.com/api/webhooks/1402137260861816933/V_YQYyoFDmM9f4WQVk1LdoHlOIe1aAdXaIZtpERtB4M_T3c4fZFk-vdaq9AuOExWYozd";
+   const webhookUrl = "https://discord.com/api/webhooks/1402137260861816933/V_YQYyoFDmM9f4WQVk1LdoHlOIe1aAdXaIZtpERtB4M_T3c4fZFk-vdaq9AuOExWYozd";
 
-    const discordPayload = {
-      username: "Payment Bot",
-      embeds: [
-        {
-          title: "💸 New Payment Proof Uploaded",
-          color: 0xfcd34d,
-          fields: [
-            { name: "📄 Filename", value: filename, inline: true },
-            { name: "💼 Plan", value: plan || "N/A", inline: true },
-            { name: "💰 Price", value: `$${price || "N/A"}`, inline: true },
-            { name: "📧 Email", value: email, inline: false },
-            { name: "📱 WhatsApp", value: whatsapp || "Not provided", inline: false },
-            { name: "🆔 Transaction ID", value: transactionId || "Not provided", inline: false },
-            { name: "<@1249079341766283340>", value: price || "Not provided", inline: false },
-          ],
-          image: { url: imageUrl },
-          timestamp: new Date().toISOString(),
-        },
+const discordPayload = {
+  username: "Payment Bot",
+  content: "<@1249079341766283340>", // ✅ This is required for actual mention
+  embeds: [
+    {
+      title: "💸 New Payment Proof Uploaded",
+      color: 0xfcd34d,
+      fields: [
+        { name: "📄 Filename", value: filename, inline: true },
+        { name: "💼 Plan", value: plan || "N/A", inline: true },
+        { name: "💰 Price", value: `$${price || "N/A"}`, inline: true },
+        { name: "📧 Email", value: email, inline: false },
+        { name: "📱 WhatsApp", value: whatsapp || "Not provided", inline: false },
+        { name: "🆔 Transaction ID", value: transactionId || "Not provided", inline: false },
       ],
-    };
+      image: { url: imageUrl },
+      timestamp: new Date().toISOString(),
+    },
+  ],
+};
+
 
     await fetch(webhookUrl, {
       method: 'POST',
