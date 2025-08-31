@@ -34,7 +34,7 @@
     </section>
 
     <!-- Payment Options -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
+    <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <button id="showBinanceBtn"
         class="bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-5 px-6 rounded-2xl shadow-lg text-xl">
         Pay with Binance Pay
@@ -50,6 +50,10 @@
       <button id="showEasypaisaBtn"
         class="bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-5 px-6 rounded-2xl shadow-lg text-xl">
         Pay with Easypaisa
+      </button>
+      <button id="showUPIBtn"
+        class="bg-yellow-500 hover:bg-yellow-600 transition duration-300 text-gray-900 font-bold py-5 px-6 rounded-2xl shadow-lg text-xl">
+        Pay with UPI
       </button>
     </section>
 
@@ -99,7 +103,7 @@
 
     <!-- Easypaisa Section -->
     <section id="easypaisaSection" class="hidden space-y-4 border-t border-yellow-600 pt-8 text-sm text-gray-300">
-     <h2 class="text-3xl font-bold text-yellow-400">EasyPaisa</h2>
+      <h2 class="text-3xl font-bold text-yellow-400">EasyPaisa</h2>
       <p>Send <span class="font-bold dynamic-price text-yellow-400">$10</span> to:</p>
       <ul class="space-y-1">
         <li><strong>Account Title:</strong> Khizar Hayat</li>
@@ -107,6 +111,22 @@
       </ul>
       <p class="text-gray-400 text-xs">
         After transferring, upload the payment proof and transaction ID below.
+      </p>
+    </section>
+
+    <!-- UPI Section -->
+    <section id="upiSection" class="hidden space-y-6 border-t border-yellow-600 pt-8">
+      <h2 class="text-3xl font-bold text-yellow-400">UPI Payment</h2>
+      <p class="text-gray-300 text-md">
+        Scan the QR code below using your UPI app to pay <span class="font-bold dynamic-price text-yellow-400">$10</span>:
+      </p>
+      <div class="flex justify-center">
+        <img src="https://via.placeholder.com/256x256.png?text=UPI+QR+Code"
+          alt="UPI QR Code"
+          class="w-64 h-64 rounded-lg border-2 border-yellow-400 shadow-lg">
+      </div>
+      <p class="text-sm text-gray-400 text-center">
+        After scanning and paying, please upload the screenshot and enter your UPI Transaction ID below.
       </p>
     </section>
 
@@ -154,7 +174,6 @@
       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
     </svg>
   </div>
-
   <!-- Script Section -->
   <script>
     const planPrices = {
@@ -279,5 +298,6 @@
   </script>
 </body>
 </html>
+
 
 
